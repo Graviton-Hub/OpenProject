@@ -134,8 +134,8 @@ local Tabs = {
 local Options = Fluent.Options
 
 Tabs.Main:AddParagraph({
-    Title = "Support",
-    Content = "Join our Discord for support and updates! \n https://discord.gg/hfEpZZpF7m"
+    Title = "Join our Discord for support and updates!",
+    Content = "https://discord.gg/hfEpZZpF7m"
 })
 
 Tabs.Main:AddButton({
