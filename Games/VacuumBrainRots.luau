@@ -48,6 +48,18 @@ local function parseCash(str)
     return val
 end
 
+local function formatCash(val)
+    if val >= 1e9 then
+        return string.format("$%.2fB", val / 1e9)
+    elseif val >= 1e6 then
+        return string.format("$%.2fM", val / 1e6)
+    elseif val >= 1e3 then
+        return string.format("$%.2fK", val / 1e3)
+    else
+        return string.format("$%.2f", val)
+    end
+end
+
 -- // Remove Tiles
 
 local function applyAll()
@@ -64,6 +76,9 @@ end
 
 local debounce = {}
 local COOLDOWN = 3
+
+local currentBestCash = 0
+local lastDisplayedCash = 0
 
 local function getBestEntity()
     local best, bestVal = nil, -math.huge
@@ -88,6 +103,7 @@ local function getBestEntity()
         end
     end
 
+    currentBestCash = bestVal
     return best
 end
 
@@ -115,10 +131,22 @@ local function runAutoCollect()
     if pivot then teleportTo(pivot) end
 end
 
+local monitorConnection
+task.spawn(function()
+    if monitorConnection then return end
+    monitorConnection = RunService.Heartbeat:Connect(function()
+        getBestEntity()
+        if currentBestCash ~= lastDisplayedCash then
+            lastDisplayedCash = currentBestCash
+            BestCashParagraph:SetDesc(formatCash(currentBestCash))
+        end
+    end)
+end)
+
 -- // UI
 
 local Window = Fluent:CreateWindow({
-    Title = "Neutrino Hub",
+    Title = "Graviton Hub",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Acrylic = true,
@@ -142,6 +170,11 @@ Tabs.Main:AddButton({
     Title = "Remove Tiles",
     Description = "Makes all tiles invisible and non-collidable",
     Callback = applyAll
+})
+
+BestCashParagraph = Tabs.Main:AddParagraph({ --Make it global varible to make function work
+    Title = "Current best cash per second",
+    Content = "$0"
 })
 
 local collectConnection
