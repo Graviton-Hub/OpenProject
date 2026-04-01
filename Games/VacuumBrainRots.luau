@@ -145,7 +145,7 @@ Tabs.Main:AddButton({
 })
 
 local collectConnection
-Tabs.Main:AddToggle("AutoCollect", { Title = "Auto Collect Highest Cash", Default = false }):OnChanged(function()
+Tabs.Main:AddToggle("AutoCollect", { Title = "Auto Best Cash Per Second", Default = false }):OnChanged(function()
     if Options.AutoCollect.Value then
         collectConnection = RunService.Heartbeat:Connect(runAutoCollect)
     else
@@ -155,6 +155,11 @@ Tabs.Main:AddToggle("AutoCollect", { Title = "Auto Collect Highest Cash", Defaul
         setCamera(nil)
     end
 end)
+
+Tabs.Main:AddButton({
+    Title = "Get Best Cash Per Second",
+    Callback = runAutoCollect
+})
 
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
